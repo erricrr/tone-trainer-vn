@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { vietnameseWords, toneMarkers } from "@/data/words";
 import type { WordVariant } from "@/types";
 import { SpeakButton } from "./speak-button";
+import { VoiceRecorder } from "./voice-recorder";
 
 export function PracticeView() {
   return (
@@ -17,7 +18,7 @@ export function PracticeView() {
       <CardHeader>
         <CardTitle className="text-3xl font-bold">Practice Words</CardTitle>
         <CardDescription className="text-lg text-muted-foreground">
-          Click on a word group to see the variations. Use the speaker icon to listen to the pronunciation.
+          Listen to the pronunciation, then record your own voice to compare.
         </CardDescription>
       </CardHeader>
       <CardContent className="p-4 md:p-6">
@@ -38,9 +39,10 @@ export function PracticeView() {
                         key={variant.word}
                         className="flex items-center justify-between p-3 rounded-lg bg-background hover:bg-muted transition-colors"
                       >
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-2 sm:gap-4">
                           <SpeakButton text={variant.word} />
-                          <div>
+                          <VoiceRecorder />
+                          <div className="flex-grow">
                             <p className="font-semibold text-lg text-primary">{variant.word}</p>
                             <p className="text-muted-foreground">{variant.meaning}</p>
                           </div>
