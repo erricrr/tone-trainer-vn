@@ -68,7 +68,7 @@ export function PracticeView() {
                     </CardHeader>
                 </AccordionTrigger>
                 <AccordionContent>
-                    <CardContent className="flex flex-col gap-4 items-center -mt-4">
+                    <CardContent className="flex flex-col gap-4 items-center -mt-4 py-4">
                         <div className="flex flex-wrap gap-2 justify-center">
                             {alphabet.map(letter => (
                                 <Button key={letter} variant="outline" size="sm" onClick={() => handleAlphabetClick(letter)} className="text-foreground">
