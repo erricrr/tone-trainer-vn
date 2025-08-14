@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Button } from "@/components/ui/button";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { cn } from "@/lib/utils";
 import { vietnameseWords, toneMarkers } from "@/data/words";
 import type { WordVariant, WordGroup } from "@/types";
@@ -58,45 +59,53 @@ export function PracticeView() {
     <div className="flex flex-col gap-4 md:gap-8 h-full">
       {/* Top Section: Carousel and Alphabet Shortcuts */}
       <Card>
-        <CardHeader>
-            <CardTitle>Word Groups</CardTitle>
-            <CardDescription>Select a word group to practice from the carousel below.</CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4 items-center">
-            <div className="flex flex-wrap gap-2 justify-center">
-                {alphabet.map(letter => (
-                    <Button key={letter} variant="outline" size="sm" onClick={() => handleAlphabetClick(letter)}>
-                    {letter}
-                    </Button>
-                ))}
-            </div>
-          <Carousel setApi={setApi} className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
-            <CarouselContent className="-ml-2 py-4">
-              {sortedVietnameseWords.map((group, index) => (
-                <CarouselItem key={index} className="pl-2 basis-1/2 md:basis-1/3">
-                    <div className="p-1 h-full">
-                        <Card 
-                            className={cn(
-                                "cursor-pointer transition-all h-full flex flex-col justify-center", 
-                                index === selectedIndex ? "border-primary shadow-lg" : "border-transparent hover:shadow-md"
-                            )}
-                            onClick={() => api?.scrollTo(index)}
-                        >
-                            <CardContent className="flex flex-col items-center justify-center p-3 gap-2">
-                                <span className="text-xl font-semibold text-primary">{group.base_spelling}</span>
-                                <p className="text-sm text-center text-muted-foreground">
-                                    {group.variants.map(v => v.word).join(' / ')}
-                                </p>
-                            </CardContent>
-                        </Card>
-                    </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious className="hidden sm:flex" />
-            <CarouselNext className="hidden sm:flex" />
-          </Carousel>
-        </CardContent>
+        <Accordion type="single" collapsible defaultValue="item-1" className="w-full">
+            <AccordionItem value="item-1" className="border-b-0">
+                <AccordionTrigger className="p-6 hover:no-underline">
+                    <CardHeader className="p-0 text-left">
+                        <CardTitle>Word Groups</CardTitle>
+                        <CardDescription>Select a word group to practice from the carousel below.</CardDescription>
+                    </CardHeader>
+                </AccordionTrigger>
+                <AccordionContent>
+                    <CardContent className="flex flex-col gap-4 items-center -mt-4">
+                        <div className="flex flex-wrap gap-2 justify-center">
+                            {alphabet.map(letter => (
+                                <Button key={letter} variant="outline" size="sm" onClick={() => handleAlphabetClick(letter)}>
+                                {letter}
+                                </Button>
+                            ))}
+                        </div>
+                    <Carousel setApi={setApi} className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
+                        <CarouselContent className="ml-2 py-4">
+                        {sortedVietnameseWords.map((group, index) => (
+                            <CarouselItem key={index} className="pl-2 basis-1/2 md:basis-1/3">
+                                <div className="p-1 h-full">
+                                    <Card 
+                                        className={cn(
+                                            "cursor-pointer transition-all h-full flex flex-col justify-center", 
+                                            index === selectedIndex ? "border-primary shadow-lg" : "border-transparent hover:shadow-md"
+                                        )}
+                                        onClick={() => api?.scrollTo(index)}
+                                    >
+                                        <CardContent className="flex flex-col items-center justify-center p-3 gap-2">
+                                            <span className="text-xl font-semibold text-primary">{group.base_spelling}</span>
+                                            <p className="text-sm text-center text-muted-foreground">
+                                                {group.variants.map(v => v.word).join(' / ')}
+                                            </p>
+                                        </CardContent>
+                                    </Card>
+                                </div>
+                            </CarouselItem>
+                        ))}
+                        </CarouselContent>
+                        <CarouselPrevious className="hidden sm:flex" />
+                        <CarouselNext className="hidden sm:flex" />
+                    </Carousel>
+                    </CardContent>
+                </AccordionContent>
+            </AccordionItem>
+        </Accordion>
       </Card>
 
       {/* Bottom Section: Selected Word Group Content */}
