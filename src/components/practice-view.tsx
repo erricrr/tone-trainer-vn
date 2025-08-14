@@ -83,7 +83,7 @@ export function PracticeView() {
                                 <div className="p-1 h-full">
                                     <Card 
                                         className={cn(
-                                            "cursor-pointer transition-all h-full flex flex-col justify-center", 
+                                            "cursor-pointer transition-all h-full flex flex-col justify-center rounded-lg", 
                                             index === selectedIndex ? "border-primary shadow-lg" : "border-transparent hover:shadow-md"
                                         )}
                                         onClick={() => api?.scrollTo(index)}
@@ -120,7 +120,7 @@ export function PracticeView() {
         </CardDescription>
         </CardHeader>
         <CardContent className="flex-grow">
-            <ScrollArea className="h-[30vh] pr-4">
+            <ScrollArea className="h-full pr-4">
             <ul className="space-y-3">
                 {selectedGroup.variants.map((variant: WordVariant) => (
                 <li
@@ -131,7 +131,7 @@ export function PracticeView() {
                     <SpeakButton text={variant.word} />
                     <VoiceRecorder />
                     <div className="flex-grow">
-                        <p className="font-semibold text-lg text-primary">{variant.word}</p>
+                        <p className="font-semibold text-primary">{variant.word}</p>
                         <p className="text-muted-foreground">{variant.meaning}</p>
                     </div>
                     </div>
