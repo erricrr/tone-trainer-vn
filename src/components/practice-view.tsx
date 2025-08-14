@@ -113,9 +113,9 @@ export function PracticeView() {
         <CardHeader>
         <CardTitle className="text-3xl font-bold">{selectedGroup.base_spelling}</CardTitle>
         {selectedGroup.note && (
-            <CardDescription className="text-lg text-muted-foreground">({selectedGroup.note})</CardDescription>
+            <CardDescription className="text-muted-foreground">({selectedGroup.note})</CardDescription>
         )}
-        <CardDescription className="text-lg text-muted-foreground pt-2">
+        <CardDescription className="text-muted-foreground pt-2">
             Listen to the pronunciation, then record your own voice to compare.
         </CardDescription>
         </CardHeader>
