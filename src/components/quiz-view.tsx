@@ -10,7 +10,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
 
 import { useWordDifficulty } from "@/hooks/useWordDifficulty";
 import { generateQuiz } from "@/lib/quiz";
@@ -102,118 +101,132 @@ export function QuizView() {
   const currentQuestion = questions[currentQuestionIndex];
 
   return (
-    <Card className="max-w-2xl mx-auto overflow-hidden">
+    <div className="w-full max-w-2xl mx-auto">
       <AnimatePresence mode="wait">
         {quizState === "idle" && (
-          <motion.div key="idle" initial={{ opacity: 0, x: -100 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 100 }}>
-            <CardHeader className="text-center">
-              <Rocket className="mx-auto h-12 w-12 text-accent mb-4" />
-              <CardTitle className="text-2xl">Ready for a Challenge?</CardTitle>
-              <CardDescription>Test your listening skills with a quick quiz.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-center text-muted-foreground">You'll hear a Vietnamese word and you have to pick the correct spelling from a list of options.</p>
-            </CardContent>
-            <CardFooter>
-              <Button onClick={startQuiz} className="w-full" size="lg">Start Quiz</Button>
-            </CardFooter>
+          <motion.div key="idle" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}>
+            <Card className="text-center">
+              <CardHeader>
+                <Rocket className="mx-auto h-12 w-12 text-accent mb-4" />
+                <CardTitle className="text-3xl">Ready for a Challenge?</CardTitle>
+                <CardDescription className="text-lg text-muted-foreground">
+                  Test your listening skills with a quick quiz.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">You'll hear a Vietnamese word and pick the correct spelling from the options.</p>
+              </CardContent>
+              <CardFooter>
+                <Button onClick={startQuiz} className="w-full" size="lg">
+                  <Sparkles className="mr-2" /> Start Quiz
+                </Button>
+              </CardFooter>
+            </Card>
           </motion.div>
         )}
 
         {quizState === "active" && currentQuestion && (
           <motion.div key="active" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <CardHeader>
-              <CardDescription>Question {currentQuestionIndex + 1} of {questions.length}</CardDescription>
-              <CardTitle className="text-xl">{currentQuestion.questionText}</CardTitle>
-              <Progress value={progress} className="w-full mt-2" />
-            </CardHeader>
-            <CardContent className="flex flex-col items-center gap-6">
-              <SpeakButton text={currentQuestion.wordToPlay} size="lg" />
-              <RadioGroup
-                value={userAnswers[currentQuestionIndex] || ""}
-                onValueChange={handleAnswerChange}
-                className="grid grid-cols-2 gap-4 w-full"
-              >
-                {currentQuestion.options.map((option) => (
-                  <div key={option}>
-                    <RadioGroupItem value={option} id={option} className="peer sr-only" />
-                    <Label
-                      htmlFor={option}
-                      className="flex items-center justify-center rounded-md border-2 border-muted bg-popover p-4 text-lg font-semibold hover:bg-accent/20 hover:text-accent-foreground peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/10 [&:has([data-state=checked])]:border-primary"
-                    >
-                      {option}
-                    </Label>
-                  </div>
-                ))}
-              </RadioGroup>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline" onClick={goToPrevious} disabled={currentQuestionIndex === 0}>
-                <ArrowLeft className="mr-2 h-4 w-4" /> Previous
-              </Button>
-              {currentQuestionIndex < questions.length - 1 ? (
-                <Button onClick={goToNext}>
-                  Next <ArrowRight className="ml-2 h-4 w-4" />
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center mb-2">
+                  <CardDescription>Question {currentQuestionIndex + 1} of {questions.length}</CardDescription>
+                  <SpeakButton text={currentQuestion.wordToPlay} size="default" />
+                </div>
+                <CardTitle className="text-2xl font-semibold">{currentQuestion.questionText}</CardTitle>
+                <Progress value={progress} className="w-full mt-4 h-2" />
+              </CardHeader>
+              <CardContent className="flex flex-col items-center gap-6">
+                <RadioGroup
+                  value={userAnswers[currentQuestionIndex] || ""}
+                  onValueChange={handleAnswerChange}
+                  className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full"
+                >
+                  {currentQuestion.options.map((option) => (
+                    <div key={option}>
+                      <RadioGroupItem value={option} id={option} className="peer sr-only" />
+                      <Label
+                        htmlFor={option}
+                        className="flex items-center justify-center rounded-lg border-2 border-muted bg-card p-4 text-xl font-semibold hover:bg-accent/10 hover:border-accent transition-all cursor-pointer peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/10 peer-data-[state=checked]:shadow-md [&:has([data-state=checked])]:border-primary"
+                      >
+                        {option}
+                      </Label>
+                    </div>
+                  ))}
+                </RadioGroup>
+              </CardContent>
+              <CardFooter className="flex justify-between mt-4">
+                <Button variant="outline" onClick={goToPrevious} disabled={currentQuestionIndex === 0}>
+                  <ArrowLeft className="mr-2" /> Previous
                 </Button>
-              ) : (
-                <Button onClick={handleSubmit} className="bg-accent hover:bg-accent/90">Submit</Button>
-              )}
-            </CardFooter>
+                {currentQuestionIndex < questions.length - 1 ? (
+                  <Button onClick={goToNext}>
+                    Next <ArrowRight className="ml-2" />
+                  </Button>
+                ) : (
+                  <Button onClick={handleSubmit} className="bg-accent hover:bg-accent/90 text-accent-foreground">
+                    <CheckCircle className="mr-2" /> Submit
+                  </Button>
+                )}
+              </CardFooter>
+            </Card>
           </motion.div>
         )}
 
         {(quizState === "submitting") && (
             <motion.div key="submitting" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex flex-col items-center justify-center p-8 min-h-[400px]">
-                <LoaderCircle className="h-12 w-12 animate-spin text-primary mb-4" />
-                <h2 className="text-2xl font-semibold text-primary">Evaluating your quiz...</h2>
-                <p className="text-muted-foreground">Our AI tutor is grading your answers.</p>
+                <LoaderCircle className="h-16 w-16 animate-spin text-primary mb-6" />
+                <h2 className="text-3xl font-bold text-primary mb-2">Evaluating your quiz...</h2>
+                <p className="text-lg text-muted-foreground">Our AI tutor is grading your answers.</p>
             </motion.div>
         )}
         
         {quizState === "results" && results && (
-          <motion.div key="results" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
-            <CardHeader className="text-center bg-muted/50 p-6">
-              <Award className="mx-auto h-12 w-12 text-accent mb-4" />
-              <CardTitle className="text-3xl">Quiz Complete!</CardTitle>
-              <CardDescription className="text-lg">Your Score: <span className="font-bold text-primary">{results.score}/100</span></CardDescription>
-            </CardHeader>
-            <CardContent className="p-6 space-y-6">
-              <Alert className="bg-primary/10 border-primary/50">
-                <Sparkles className="h-4 w-4 text-primary" />
-                <AlertTitle className="font-semibold text-primary">AI Feedback</AlertTitle>
-                <AlertDescription>{results.feedback}</AlertDescription>
-              </Alert>
+          <motion.div key="results" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}>
+            <Card>
+              <CardHeader className="text-center bg-primary/10 p-6">
+                <Award className="mx-auto h-16 w-16 text-accent mb-4" />
+                <CardTitle className="text-4xl font-bold">Quiz Complete!</CardTitle>
+                <CardDescription className="text-2xl mt-2">Your Score: <span className="font-bold text-primary">{results.score}/100</span></CardDescription>
+              </CardHeader>
+              <CardContent className="p-6 space-y-6">
+                <Alert className="bg-blue-50 border-blue-200">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  <AlertTitle className="font-semibold text-primary text-lg">AI Feedback</AlertTitle>
+                  <AlertDescription className="text-base">{results.feedback}</AlertDescription>
+                </Alert>
 
-              <div>
-                <h3 className="font-semibold mb-3 text-lg">Your Answers</h3>
-                <ul className="space-y-2">
-                  {questions.map((q, i) => {
-                    const isCorrect = userAnswers[i] === q.correctAnswer;
-                    return (
-                      <li key={i} className="flex items-center justify-between p-3 rounded-md bg-secondary">
-                        <div className="font-medium">Question {i + 1}: <span className="font-normal text-muted-foreground">{q.correctAnswer}</span></div>
-                        <div className="flex items-center gap-2">
-                          <span className={`${isCorrect ? 'text-green-600' : 'text-destructive'}`}>{userAnswers[i] || 'Not answered'}</span>
-                          {isCorrect ? (
-                            <CheckCircle className="h-5 w-5 text-green-600" />
-                          ) : (
-                            <XCircle className="h-5 w-5 text-destructive" />
-                          )}
-                        </div>
-                      </li>
-                    )
-                  })}
-                </ul>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button onClick={startQuiz} className="w-full" size="lg">
-                <RefreshCw className="mr-2 h-4 w-4" /> Try Another Quiz
-              </Button>
-            </CardFooter>
+                <div>
+                  <h3 className="font-semibold mb-3 text-xl">Your Answers</h3>
+                  <ul className="space-y-2 max-h-60 overflow-y-auto pr-2">
+                    {questions.map((q, i) => {
+                      const isCorrect = userAnswers[i] === q.correctAnswer;
+                      return (
+                        <li key={i} className="flex items-center justify-between p-3 rounded-lg bg-secondary/70">
+                          <div className="font-medium">Q{i + 1}: <span className="font-normal text-muted-foreground">{q.correctAnswer}</span></div>
+                          <div className="flex items-center gap-2">
+                            <span className={`font-semibold ${isCorrect ? 'text-green-600' : 'text-destructive'}`}>{userAnswers[i] || 'Not answered'}</span>
+                            {isCorrect ? (
+                              <CheckCircle className="h-5 w-5 text-green-500" />
+                            ) : (
+                              <XCircle className="h-5 w-5 text-destructive" />
+                            )}
+                          </div>
+                        </li>
+                      )
+                    })}
+                  </ul>
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button onClick={startQuiz} className="w-full" size="lg">
+                  <RefreshCw className="mr-2" /> Try Another Quiz
+                </Button>
+              </CardFooter>
+            </Card>
           </motion.div>
         )}
       </AnimatePresence>
-    </Card>
+    </div>
   );
 }

@@ -3,24 +3,24 @@
 @tailwind utilities;
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', sans-serif;
 }
 
 @layer base {
   :root {
-    --background: 0 0% 94%;
+    --background: 0 0% 96%; /* #F5F5F5 */
     --foreground: 224 71.4% 4.1%;
     --card: 0 0% 100%;
     --card-foreground: 224 71.4% 4.1%;
     --popover: 0 0% 100%;
     --popover-foreground: 224 71.4% 4.1%;
-    --primary: 196 76% 53%;
+    --primary: 196 76% 53%; /* #29ABE2 */
     --primary-foreground: 210 20% 98%;
-    --secondary: 210 40% 96.1%;
+    --secondary: 215 28% 90%; /* Lighter gray for secondary elements */
     --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
+    --muted: 215 28% 90%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 32 87% 62%;
+    --accent: 32 87% 62%; /* #F2994A */
     --accent-foreground: 0 0% 100%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 20% 98%;
@@ -32,7 +32,15 @@ body {
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 0.5rem;
+    --radius: 0.8rem;
+
+    /* Sidebar specific colors */
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 224 71.4% 4.1%;
+    --sidebar-border: 214.3 31.8% 91.4%;
+    --sidebar-accent: 196 76% 53%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-ring: 196 76% 43%;
   }
   .dark {
     --background: 222.2 84% 4.9%;
@@ -59,6 +67,14 @@ body {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    
+    /* Sidebar specific colors */
+    --sidebar-background: 222.2 84% 4.9%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-border: 217.2 32.6% 17.5%;
+    --sidebar-accent: 196 76% 53%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-ring: 196 76% 63%;
   }
 }
 
