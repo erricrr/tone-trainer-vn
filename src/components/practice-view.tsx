@@ -13,18 +13,23 @@ import type { WordVariant, WordGroup } from "@/types";
 import { SpeakButton } from "./speak-button";
 import { VoiceRecorder } from "./voice-recorder";
 
+// Sort the words alphabetically by base_spelling for display
+const sortedVietnameseWords = [...vietnameseWords].sort((a, b) => 
+  a.base_spelling.localeCompare(b.base_spelling)
+);
+
 export function PracticeView() {
   const [api, setApi] = React.useState<EmblaCarouselType>()
-  const [selectedGroup, setSelectedGroup] = useState<WordGroup>(vietnameseWords[0]);
+  const [selectedGroup, setSelectedGroup] = useState<WordGroup>(sortedVietnameseWords[0]);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const alphabet = useMemo(() => {
-    const letters = new Set(vietnameseWords.map(group => group.base_spelling[0].toUpperCase()));
+    const letters = new Set(sortedVietnameseWords.map(group => group.base_spelling[0].toUpperCase()));
     return Array.from(letters).sort();
   }, []);
 
   const handleAlphabetClick = (letter: string) => {
-    const index = vietnameseWords.findIndex(group => group.base_spelling[0].toUpperCase() === letter);
+    const index = sortedVietnameseWords.findIndex(group => group.base_spelling[0].toUpperCase() === letter);
     if (index !== -1 && api) {
       api.scrollTo(index);
     }
@@ -37,7 +42,7 @@ export function PracticeView() {
  
     const onSelect = (api: EmblaCarouselType) => {
        setSelectedIndex(api.selectedScrollSnap())
-       setSelectedGroup(vietnameseWords[api.selectedScrollSnap()])
+       setSelectedGroup(sortedVietnameseWords[api.selectedScrollSnap()])
     }
 
     onSelect(api)
@@ -67,7 +72,7 @@ export function PracticeView() {
             </div>
           <Carousel setApi={setApi} className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
             <CarouselContent>
-              {vietnameseWords.map((group, index) => (
+              {sortedVietnameseWords.map((group, index) => (
                 <CarouselItem key={index}>
                     <div className="p-1">
                         <Card 
