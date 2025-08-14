@@ -24,7 +24,7 @@ export function PracticeView() {
           </CardHeader>
           <CardContent className="p-2 flex-grow">
             <ScrollArea className="h-full pr-4">
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {vietnameseWords.map((group, index) => (
                   <React.Fragment key={group.base_spelling}>
                     <button
@@ -33,12 +33,12 @@ export function PracticeView() {
                         "w-full text-left p-3 rounded-lg transition-colors",
                         selectedGroup.base_spelling === group.base_spelling
                           ? "bg-primary text-primary-foreground"
-                          : "bg-card hover:bg-muted"
+                          : "hover:bg-muted"
                       )}
                     >
-                      <p className="font-semibold text-sm">{group.base_spelling}</p>
-                      <p className={cn("text-xs mt-1", selectedGroup.base_spelling === group.base_spelling ? "text-primary-foreground/80" : "text-muted-foreground")}>
-                        {group.variants.map(v => v.word).join(', ')}
+                      <p className="font-semibold text-base">{group.base_spelling}</p>
+                      <p className={cn("text-sm mt-1 leading-relaxed", selectedGroup.base_spelling === group.base_spelling ? "text-primary-foreground/80" : "text-muted-foreground")}>
+                        {group.variants.map(v => v.word).join(' / ')}
                       </p>
                     </button>
                     {index < vietnameseWords.length - 1 && <Separator className="my-1" />}
