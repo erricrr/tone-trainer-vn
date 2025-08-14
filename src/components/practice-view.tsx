@@ -71,18 +71,18 @@ export function PracticeView() {
                 ))}
             </div>
           <Carousel setApi={setApi} className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
-            <CarouselContent>
+            <CarouselContent className="-ml-2 py-4">
               {sortedVietnameseWords.map((group, index) => (
-                <CarouselItem key={index}>
-                    <div className="p-1">
+                <CarouselItem key={index} className="pl-2 basis-1/2 md:basis-1/3">
+                    <div className="p-1 h-full">
                         <Card 
                             className={cn(
-                                "cursor-pointer transition-all rounded-lg", 
-                                index === selectedIndex ? "border-primary shadow-lg" : "hover:shadow-md"
+                                "cursor-pointer transition-all h-full flex flex-col justify-center", 
+                                index === selectedIndex ? "border-primary shadow-lg" : "border-transparent hover:shadow-md"
                             )}
                             onClick={() => api?.scrollTo(index)}
                         >
-                            <CardContent className="flex flex-col items-center justify-center p-4 gap-2">
+                            <CardContent className="flex flex-col items-center justify-center p-3 gap-2">
                                 <span className="text-xl font-semibold text-primary">{group.base_spelling}</span>
                                 <p className="text-sm text-center text-muted-foreground">
                                     {group.variants.map(v => v.word).join(' / ')}
