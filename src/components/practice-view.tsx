@@ -64,14 +64,14 @@ export function PracticeView() {
                 <AccordionTrigger className="p-6 hover:no-underline">
                     <CardHeader className="p-0 text-left">
                         <CardTitle>Word Groups</CardTitle>
-                        <CardDescription>Select a word group to practice from the carousel below.</CardDescription>
+                        <CardDescription>Select a word group to practice listening and pronunciation.</CardDescription>
                     </CardHeader>
                 </AccordionTrigger>
                 <AccordionContent>
                     <CardContent className="flex flex-col gap-4 items-center -mt-4">
                         <div className="flex flex-wrap gap-2 justify-center">
                             {alphabet.map(letter => (
-                                <Button key={letter} variant="outline" size="sm" onClick={() => handleAlphabetClick(letter)}>
+                                <Button key={letter} variant="outline" size="sm" onClick={() => handleAlphabetClick(letter)} className="text-foreground">
                                 {letter}
                                 </Button>
                             ))}
