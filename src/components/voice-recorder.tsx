@@ -8,19 +8,31 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 
 type RecordingStatus = 'idle' | 'permission_denied' | 'recording' | 'recorded';
 
+const MAX_RECORDING_SECONDS = 3;
+
 export function VoiceRecorder() {
   const [recordingStatus, setRecordingStatus] = useState<RecordingStatus>('idle');
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [countdown, setCountdown] = useState(MAX_RECORDING_SECONDS);
+
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const countdownIntervalRef = useRef<NodeJS.Timer | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
+    // Clean up timers and URL object when component unmounts
     return () => {
-      // Clean up URL object when component unmounts
       if (audioUrl) {
         URL.revokeObjectURL(audioUrl);
+      }
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+      if (countdownIntervalRef.current) {
+        clearInterval(countdownIntervalRef.current);
       }
     };
   }, [audioUrl]);
@@ -42,12 +54,28 @@ export function VoiceRecorder() {
     }
   };
 
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
+      mediaRecorderRef.current.stop();
+    }
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    if (countdownIntervalRef.current) {
+      clearInterval(countdownIntervalRef.current);
+      countdownIntervalRef.current = null;
+    }
+  };
+
   const startRecording = async () => {
     const stream = await requestMicPermission();
     if (!stream) return;
 
     setRecordingStatus('recording');
+    setCountdown(MAX_RECORDING_SECONDS);
     audioChunksRef.current = [];
+    
     const mediaRecorder = new MediaRecorder(stream);
     mediaRecorderRef.current = mediaRecorder;
 
@@ -68,12 +96,14 @@ export function VoiceRecorder() {
     };
 
     mediaRecorder.start();
-  };
 
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && mediaRecorderRef.current.state === 'recording') {
-      mediaRecorderRef.current.stop();
-    }
+    countdownIntervalRef.current = setInterval(() => {
+      setCountdown(prev => Math.max(0, prev - 1));
+    }, 1000);
+
+    timerRef.current = setTimeout(() => {
+        stopRecording();
+    }, MAX_RECORDING_SECONDS * 1000);
   };
 
   const playRecording = () => {
@@ -127,18 +157,14 @@ export function VoiceRecorder() {
       )}
 
       {recordingStatus === 'recording' && (
-        <TooltipProvider>
-            <Tooltip>
-                <TooltipTrigger asChild>
-                    <Button variant="destructive" size="icon" onClick={stopRecording} className="animate-pulse">
-                        <Square />
-                    </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                    <p>Stop recording</p>
-                </TooltipContent>
-            </Tooltip>
-        </TooltipProvider>
+        <div className="relative flex items-center justify-center">
+            <Button variant="destructive" size="icon" onClick={stopRecording} className="animate-pulse">
+                <Square />
+            </Button>
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <span className="text-destructive-foreground font-bold text-sm">{countdown}</span>
+            </div>
+        </div>
       )}
       
       {recordingStatus === 'recorded' && (
