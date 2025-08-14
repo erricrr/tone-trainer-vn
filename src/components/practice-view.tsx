@@ -77,7 +77,7 @@ export function PracticeView() {
                     <div className="p-1">
                         <Card 
                             className={cn(
-                                "cursor-pointer transition-all", 
+                                "cursor-pointer transition-all rounded-lg", 
                                 index === selectedIndex ? "border-primary shadow-lg" : "hover:shadow-md"
                             )}
                             onClick={() => api?.scrollTo(index)}
