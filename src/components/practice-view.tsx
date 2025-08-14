@@ -9,6 +9,7 @@ import { vietnameseWords, toneMarkers } from "@/data/words";
 import type { WordVariant, WordGroup } from "@/types";
 import { SpeakButton } from "./speak-button";
 import { VoiceRecorder } from "./voice-recorder";
+import { Separator } from "./ui/separator";
 
 export function PracticeView() {
   const [selectedGroup, setSelectedGroup] = useState<WordGroup>(vietnameseWords[0]);
@@ -24,19 +25,24 @@ export function PracticeView() {
           <CardContent className="p-2 flex-grow">
             <ScrollArea className="h-full pr-4">
               <div className="space-y-2">
-                {vietnameseWords.map((group) => (
-                  <button
-                    key={group.base_spelling}
-                    onClick={() => setSelectedGroup(group)}
-                    className={cn(
-                      "w-full text-left p-3 rounded-lg transition-colors text-sm font-medium",
-                      selectedGroup.base_spelling === group.base_spelling
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-card hover:bg-muted"
-                    )}
-                  >
-                    {group.base_spelling}
-                  </button>
+                {vietnameseWords.map((group, index) => (
+                  <React.Fragment key={group.base_spelling}>
+                    <button
+                      onClick={() => setSelectedGroup(group)}
+                      className={cn(
+                        "w-full text-left p-3 rounded-lg transition-colors",
+                        selectedGroup.base_spelling === group.base_spelling
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-card hover:bg-muted"
+                      )}
+                    >
+                      <p className="font-semibold text-sm">{group.base_spelling}</p>
+                      <p className={cn("text-xs mt-1", selectedGroup.base_spelling === group.base_spelling ? "text-primary-foreground/80" : "text-muted-foreground")}>
+                        {group.variants.map(v => v.word).join(', ')}
+                      </p>
+                    </button>
+                    {index < vietnameseWords.length - 1 && <Separator className="my-1" />}
+                  </React.Fragment>
                 ))}
               </div>
             </ScrollArea>
