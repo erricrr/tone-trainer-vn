@@ -1,64 +1,87 @@
+
 "use client";
 
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 import { vietnameseWords, toneMarkers } from "@/data/words";
-import type { WordVariant } from "@/types";
+import type { WordVariant, WordGroup } from "@/types";
 import { SpeakButton } from "./speak-button";
 import { VoiceRecorder } from "./voice-recorder";
 
 export function PracticeView() {
+  const [selectedGroup, setSelectedGroup] = useState<WordGroup>(vietnameseWords[0]);
+
   return (
-    <Card className="w-full max-w-4xl mx-auto border-none shadow-none bg-transparent">
-      <CardHeader>
-        <CardTitle className="text-3xl font-bold">Practice Words</CardTitle>
-        <CardDescription className="text-lg text-muted-foreground">
-          Listen to the pronunciation, then record your own voice to compare.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="p-4 md:p-6">
-        <Accordion type="single" collapsible className="w-full space-y-2">
-          {vietnameseWords.map((group, index) => (
-            <AccordionItem value={`item-${index}`} key={group.base_spelling} className="border-b-0">
-              <Card className="overflow-hidden">
-                <AccordionTrigger className="text-lg font-medium hover:no-underline rounded-lg px-4 py-4 bg-card data-[state=open]:bg-muted/50 data-[state=open]:rounded-b-none">
-                  {group.base_spelling}
-                  {group.note && (
-                    <span className="text-sm font-normal text-muted-foreground ml-2">({group.note})</span>
-                  )}
-                </AccordionTrigger>
-                <AccordionContent className="pt-2 bg-card rounded-b-lg">
-                  <ul className="space-y-3 p-4">
-                    {group.variants.map((variant: WordVariant) => (
-                      <li
-                        key={variant.word}
-                        className="flex items-center justify-between p-3 rounded-lg bg-background hover:bg-muted transition-colors"
-                      >
-                        <div className="flex items-center gap-2 sm:gap-4">
-                          <SpeakButton text={variant.word} />
-                          <VoiceRecorder />
-                          <div className="flex-grow">
-                            <p className="font-semibold text-lg text-primary">{variant.word}</p>
-                            <p className="text-muted-foreground">{variant.meaning}</p>
-                          </div>
-                        </div>
-                        <p className="text-sm text-muted-foreground text-right hidden sm:block">
-                          {toneMarkers[variant.tone as keyof typeof toneMarkers]}
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                </AccordionContent>
-              </Card>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </CardContent>
-    </Card>
+    <div className="flex flex-col md:flex-row gap-8 h-[calc(100vh-10rem)]">
+      {/* Left Column: Word Group List */}
+      <div className="w-full md:w-1/3 lg:w-1/4">
+        <Card className="h-full flex flex-col">
+          <CardHeader>
+            <CardTitle className="text-xl">Word Groups</CardTitle>
+          </CardHeader>
+          <CardContent className="p-2 flex-grow">
+            <ScrollArea className="h-full pr-4">
+              <div className="space-y-2">
+                {vietnameseWords.map((group) => (
+                  <button
+                    key={group.base_spelling}
+                    onClick={() => setSelectedGroup(group)}
+                    className={cn(
+                      "w-full text-left p-3 rounded-lg transition-colors text-sm font-medium",
+                      selectedGroup.base_spelling === group.base_spelling
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-card hover:bg-muted"
+                    )}
+                  >
+                    {group.base_spelling}
+                  </button>
+                ))}
+              </div>
+            </ScrollArea>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Right Column: Selected Word Group Content */}
+      <div className="w-full md:w-2/3 lg:w-3/4">
+        <Card className="h-full flex flex-col">
+           <CardHeader>
+            <CardTitle className="text-3xl font-bold">{selectedGroup.base_spelling}</CardTitle>
+            {selectedGroup.note && (
+                <CardDescription className="text-lg text-muted-foreground">({selectedGroup.note})</CardDescription>
+            )}
+            <CardDescription className="text-lg text-muted-foreground pt-2">
+                Listen to the pronunciation, then record your own voice to compare.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex-grow">
+             <ScrollArea className="h-full pr-4">
+              <ul className="space-y-3">
+                {selectedGroup.variants.map((variant: WordVariant) => (
+                  <li
+                    key={variant.word}
+                    className="flex items-center justify-between p-3 rounded-lg bg-background hover:bg-muted transition-colors"
+                  >
+                    <div className="flex items-center gap-2 sm:gap-4">
+                      <SpeakButton text={variant.word} />
+                      <VoiceRecorder />
+                      <div className="flex-grow">
+                        <p className="font-semibold text-lg text-primary">{variant.word}</p>
+                        <p className="text-muted-foreground">{variant.meaning}</p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-muted-foreground text-right hidden sm:block">
+                      {toneMarkers[variant.tone as keyof typeof toneMarkers]}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </ScrollArea>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 }
