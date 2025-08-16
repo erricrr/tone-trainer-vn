@@ -76,38 +76,40 @@ export function PracticeView() {
                                 </Button>
                             ))}
                         </div>
-                    <Carousel 
-                        setApi={setEmblaApi} 
-                        className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg"
-                        opts={{
-                            watchDrag: false,
-                        }}
-                    >
-                        <CarouselContent className="ml-2 py-4">
-                        {sortedVietnameseWords.map((group, index) => (
-                            <CarouselItem key={index} className="pl-2 basis-1/2 md:basis-1/3">
-                                <div className="p-1 h-full">
-                                    <Card 
-                                        className={cn(
-                                            "cursor-pointer transition-all h-full flex flex-col justify-center rounded-lg", 
-                                            index === selectedIndex ? "border-primary shadow-lg" : "border-transparent hover:shadow-md"
-                                        )}
-                                        onClick={() => emblaApi?.scrollTo(index)}
-                                    >
-                                        <CardContent className="flex flex-col items-center justify-center p-3 gap-2">
-                                            <span className="text-xl font-semibold text-primary">{group.base_spelling}</span>
-                                            <p className="text-sm text-center text-muted-foreground">
-                                                {group.variants.map(v => v.word).join(' / ')}
-                                            </p>
-                                        </CardContent>
-                                    </Card>
-                                </div>
-                            </CarouselItem>
-                        ))}
-                        </CarouselContent>
-                        <CarouselPrevious className="hidden sm:flex" />
-                        <CarouselNext className="hidden sm:flex" />
-                    </Carousel>
+                        <div className="relative w-full flex items-center justify-center">
+                            <Carousel 
+                                setApi={setEmblaApi} 
+                                className="w-full max-w-xs sm:max-w-sm md:max-w-md"
+                                opts={{
+                                    watchDrag: false,
+                                }}
+                            >
+                                <CarouselContent className="-ml-2 py-4">
+                                {sortedVietnameseWords.map((group, index) => (
+                                    <CarouselItem key={index} className="pl-2 basis-1/2 md:basis-1/3">
+                                        <div className="p-1 h-full">
+                                            <Card 
+                                                className={cn(
+                                                    "cursor-pointer transition-all h-full flex flex-col justify-center rounded-lg", 
+                                                    index === selectedIndex ? "border-primary shadow-lg" : "border-transparent hover:shadow-md"
+                                                )}
+                                                onClick={() => emblaApi?.scrollTo(index)}
+                                            >
+                                                <CardContent className="flex flex-col items-center justify-center p-3 gap-2">
+                                                    <span className="text-xl font-semibold text-primary">{group.base_spelling}</span>
+                                                    <p className="text-sm text-center text-muted-foreground">
+                                                        {group.variants.map(v => v.word).join(' / ')}
+                                                    </p>
+                                                </CardContent>
+                                            </Card>
+                                        </div>
+                                    </CarouselItem>
+                                ))}
+                                </CarouselContent>
+                                <CarouselPrevious className="absolute left-0 sm:left-2 md:left-4" />
+                                <CarouselNext className="absolute right-0 sm:right-2 md:right-4" />
+                            </Carousel>
+                        </div>
                     </CardContent>
                 </AccordionContent>
             </AccordionItem>
