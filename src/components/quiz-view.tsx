@@ -54,7 +54,7 @@ export function QuizView() {
 
   const goToPrevious = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev + 1);
+      setCurrentQuestionIndex(prev => prev - 1);
     }
   };
 
@@ -130,11 +130,11 @@ export function QuizView() {
           <motion.div key="active" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <Card>
               <CardHeader>
-                <div className="flex justify-between items-center mb-2">
-                  <CardDescription>Question {currentQuestionIndex + 1} of {questions.length}</CardDescription>
-                  <SpeakButton text={currentQuestion.wordToPlay} size="default" />
+                 <CardDescription>Question {currentQuestionIndex + 1} of {questions.length}</CardDescription>
+                <div className="flex items-center gap-2">
+                    <CardTitle className="text-2xl font-semibold">{currentQuestion.questionText}</CardTitle>
+                    <SpeakButton text={currentQuestion.wordToPlay} size="default" />
                 </div>
-                <CardTitle className="text-2xl font-semibold">{currentQuestion.questionText}</CardTitle>
                 <Progress value={progress} className="w-full mt-4 h-2" />
               </CardHeader>
               <CardContent className="flex flex-col items-center gap-6">
