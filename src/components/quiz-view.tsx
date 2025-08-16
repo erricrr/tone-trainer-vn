@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -53,7 +54,7 @@ export function QuizView() {
 
   const goToPrevious = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev - 1);
+      setCurrentQuestionIndex(prev => prev + 1);
     }
   };
 
@@ -203,7 +204,10 @@ export function QuizView() {
                       const isCorrect = userAnswers[i] === q.correctAnswer;
                       return (
                         <li key={i} className="flex items-center justify-between p-3 rounded-lg bg-secondary/70">
-                          <div className="font-medium">Q{i + 1}: <span className="font-normal text-muted-foreground">{q.correctAnswer}</span></div>
+                          <div className="flex items-center gap-2">
+                            <SpeakButton text={q.wordToPlay} />
+                            <div className="font-medium">Q{i + 1}: <span className="font-normal text-muted-foreground">{q.correctAnswer}</span></div>
+                          </div>
                           <div className="flex items-center gap-2">
                             <span className={`font-semibold ${isCorrect ? 'text-green-600' : 'text-destructive'}`}>{userAnswers[i] || 'Not answered'}</span>
                             {isCorrect ? (
