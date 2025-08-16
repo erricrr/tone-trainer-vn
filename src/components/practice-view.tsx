@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import useEmblaCarousel, { type EmblaCarouselType as CarouselApi } from 'embla-carousel-react';
+import type { EmblaCarouselType as CarouselApi } from 'embla-carousel-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
@@ -20,7 +20,7 @@ const sortedVietnameseWords = [...vietnameseWords].sort((a, b) =>
 );
 
 export function PracticeView() {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false });
+  const [emblaApi, setEmblaApi] = useState<CarouselApi>();
   const [selectedGroup, setSelectedGroup] = useState<WordGroup>(sortedVietnameseWords[0]);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -37,6 +37,7 @@ export function PracticeView() {
   };
   
   const onSelect = useCallback((emblaApi: CarouselApi) => {
+    if (!emblaApi) return;
     const newIndex = emblaApi.selectedScrollSnap();
     setSelectedIndex(newIndex);
     setSelectedGroup(sortedVietnameseWords[newIndex]);
@@ -75,7 +76,7 @@ export function PracticeView() {
                                 </Button>
                             ))}
                         </div>
-                    <Carousel setApi={emblaApi} className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
+                    <Carousel setApi={setEmblaApi} className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
                         <CarouselContent className="ml-2 py-4">
                         {sortedVietnameseWords.map((group, index) => (
                             <CarouselItem key={index} className="pl-2 basis-1/2 md:basis-1/3">
