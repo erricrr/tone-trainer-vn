@@ -1,8 +1,8 @@
 
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
-import type { UseEmblaCarouselType } from 'embla-carousel-react';
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import useEmblaCarousel, { type EmblaCarouselType as CarouselApi } from 'embla-carousel-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
@@ -20,7 +20,7 @@ const sortedVietnameseWords = [...vietnameseWords].sort((a, b) =>
 );
 
 export function PracticeView() {
-  const [api, setApi] = React.useState<UseEmblaCarouselType>()
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false });
   const [selectedGroup, setSelectedGroup] = useState<WordGroup>(sortedVietnameseWords[0]);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -31,28 +31,27 @@ export function PracticeView() {
 
   const handleAlphabetClick = (letter: string) => {
     const index = sortedVietnameseWords.findIndex(group => group.base_spelling[0].toUpperCase() === letter);
-    if (index !== -1 && api) {
-      api.scrollTo(index);
+    if (index !== -1 && emblaApi) {
+      emblaApi.scrollTo(index);
     }
   };
+  
+  const onSelect = useCallback((emblaApi: CarouselApi) => {
+    const newIndex = emblaApi.selectedScrollSnap();
+    setSelectedIndex(newIndex);
+    setSelectedGroup(sortedVietnameseWords[newIndex]);
+  }, []);
 
   useEffect(() => {
-    if (!api) {
-      return
-    }
- 
-    const onSelect = (api: UseEmblaCarouselType) => {
-       setSelectedIndex(api.selectedScrollSnap())
-       setSelectedGroup(sortedVietnameseWords[api.selectedScrollSnap()])
-    }
+    if (!emblaApi) return;
+    
+    onSelect(emblaApi);
+    emblaApi.on('select', onSelect);
 
-    onSelect(api)
-    api.on('select', onSelect)
- 
     return () => {
-      api.off('select', onSelect)
-    }
-  }, [api])
+      emblaApi.off('select', onSelect);
+    };
+  }, [emblaApi, onSelect]);
 
 
   return (
@@ -76,7 +75,7 @@ export function PracticeView() {
                                 </Button>
                             ))}
                         </div>
-                    <Carousel setApi={setApi} className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
+                    <Carousel setApi={emblaApi} className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
                         <CarouselContent className="ml-2 py-4">
                         {sortedVietnameseWords.map((group, index) => (
                             <CarouselItem key={index} className="pl-2 basis-1/2 md:basis-1/3">
@@ -86,7 +85,7 @@ export function PracticeView() {
                                             "cursor-pointer transition-all h-full flex flex-col justify-center rounded-lg", 
                                             index === selectedIndex ? "border-primary shadow-lg" : "border-transparent hover:shadow-md"
                                         )}
-                                        onClick={() => api?.scrollTo(index)}
+                                        onClick={() => emblaApi?.scrollTo(index)}
                                     >
                                         <CardContent className="flex flex-col items-center justify-center p-3 gap-2">
                                             <span className="text-xl font-semibold text-primary">{group.base_spelling}</span>
