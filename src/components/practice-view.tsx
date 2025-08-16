@@ -176,28 +176,28 @@ export function PracticeView() {
         </CardDescription>
         </CardHeader>
         <CardContent className="flex-grow">
-            <ScrollArea className="h-full pr-4">
-            <ul className="space-y-3">
-                {selectedGroup.variants.map((variant: WordVariant) => (
+          <ScrollArea className="h-full pr-4">
+            <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {selectedGroup.variants.map((variant: WordVariant) => (
                 <li
-                    key={variant.word}
-                    className="flex items-center justify-between p-3 rounded-lg bg-background hover:bg-muted transition-colors"
+                  key={variant.word}
+                  className="flex items-center justify-between p-3 rounded-lg bg-background hover:bg-muted transition-colors"
                 >
-                    <div className="flex items-center gap-2 sm:gap-4">
+                  <div className="flex items-center gap-2 sm:gap-4">
                     <SpeakButton text={variant.word} />
                     <VoiceRecorder />
                     <div className="flex-grow">
-                        <p className="font-semibold text-primary">{variant.word}</p>
-                        <p className="text-muted-foreground">{variant.meaning}</p>
+                      <p className="font-semibold text-primary">{variant.word}</p>
+                      <p className="text-muted-foreground">{variant.meaning}</p>
                     </div>
-                    </div>
-                    <p className="text-sm text-muted-foreground text-right hidden sm:block">
+                  </div>
+                  <p className="text-sm text-muted-foreground text-right hidden sm:block">
                     {toneMarkers[variant.tone as keyof typeof toneMarkers]}
-                    </p>
+                  </p>
                 </li>
-                ))}
+              ))}
             </ul>
-        </ScrollArea>
+          </ScrollArea>
         </CardContent>
       </Card>
     </div>
