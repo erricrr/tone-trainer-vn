@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import type { EmblaCarouselType } from 'embla-carousel-react';
+import type { UseEmblaCarouselType } from 'embla-carousel-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
@@ -20,7 +20,7 @@ const sortedVietnameseWords = [...vietnameseWords].sort((a, b) =>
 );
 
 export function PracticeView() {
-  const [api, setApi] = React.useState<EmblaCarouselType>()
+  const [api, setApi] = React.useState<UseEmblaCarouselType>()
   const [selectedGroup, setSelectedGroup] = useState<WordGroup>(sortedVietnameseWords[0]);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -41,7 +41,7 @@ export function PracticeView() {
       return
     }
  
-    const onSelect = (api: EmblaCarouselType) => {
+    const onSelect = (api: UseEmblaCarouselType) => {
        setSelectedIndex(api.selectedScrollSnap())
        setSelectedGroup(sortedVietnameseWords[api.selectedScrollSnap()])
     }

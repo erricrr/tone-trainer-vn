@@ -208,7 +208,7 @@ export const toneMarkers = {
     "level": "no mark (ngang)",
     "falling": "grave accent (`) - huyền", 
     "rising": "acute accent (´) - sắc",
-    "falling-rising": "hook above (̉) - hỏi",
+    "falling-rising": "hook above ( ̉) - hỏi",
     "creaky": "tilde (~) - ngã",
     "heavy": "dot below (.) - nặng"
   };
