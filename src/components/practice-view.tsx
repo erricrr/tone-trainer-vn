@@ -191,9 +191,6 @@ export function PracticeView() {
                       <p className="text-muted-foreground">{variant.meaning}</p>
                     </div>
                   </div>
-                  <p className="text-sm text-muted-foreground text-right hidden sm:block">
-                    {toneMarkers[variant.tone as keyof typeof toneMarkers]}
-                  </p>
                 </li>
               ))}
             </ul>
