@@ -181,15 +181,15 @@ export function PracticeView() {
               {selectedGroup.variants.map((variant: WordVariant) => (
                 <li
                   key={variant.word}
-                  className="flex items-center justify-between p-3 rounded-lg bg-background hover:bg-muted transition-colors"
+                  className="flex flex-col justify-start p-3 rounded-lg bg-background hover:bg-muted transition-colors"
                 >
-                  <div className="flex items-center gap-2 sm:gap-4">
+                  <div className="flex-grow mb-2">
+                    <p className="font-semibold text-primary">{variant.word}</p>
+                    <p className="text-muted-foreground">{variant.meaning}</p>
+                  </div>
+                  <div className="flex items-center gap-2">
                     <SpeakButton text={variant.word} />
                     <VoiceRecorder />
-                    <div className="flex-grow">
-                      <p className="font-semibold text-primary">{variant.word}</p>
-                      <p className="text-muted-foreground">{variant.meaning}</p>
-                    </div>
                   </div>
                 </li>
               ))}
