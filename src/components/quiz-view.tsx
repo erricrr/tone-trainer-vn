@@ -195,7 +195,7 @@ export function QuizView() {
                 <Alert className="bg-blue-50 border-blue-200">
                   <Sparkles className="h-5 w-5 text-primary" />
                   <AlertTitle className="font-semibold text-primary text-lg">AI Feedback</AlertTitle>
-                  <AlertDescription asChild>
+                  <AlertDescription>
                     <ReactMarkdown className="prose prose-sm text-base">
                       {results.feedback}
                     </ReactMarkdown>
@@ -241,5 +241,3 @@ export function QuizView() {
     </div>
   );
 }
-
-    
