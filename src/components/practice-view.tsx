@@ -177,7 +177,7 @@ export function PracticeView() {
         </CardHeader>
         <CardContent className="flex-grow">
           <ScrollArea className="h-full pr-4">
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <ul className="grid grid-cols-2 sm:grid-cols-2 gap-3">
               {selectedGroup.variants.map((variant: WordVariant) => (
                 <li
                   key={variant.word}
