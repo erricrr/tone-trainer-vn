@@ -106,8 +106,8 @@ export function PracticeView() {
                                     </CarouselItem>
                                 ))}
                                 </CarouselContent>
-                                <CarouselPrevious className="absolute left-0 sm:left-2 md:left-4" />
-                                <CarouselNext className="absolute right-0 sm:right-2 md:right-4" />
+                                <CarouselPrevious className="absolute -left-4 sm:-left-6 md:-left-8" />
+                                <CarouselNext className="absolute -right-4 sm:-right-6 md:-right-8" />
                             </Carousel>
                         </div>
                     </CardContent>
