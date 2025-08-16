@@ -2,7 +2,7 @@
 "use client";
 
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import type { UseEmblaCarouselType as CarouselApi } from 'embla-carousel-react';
+import type { CarouselApi } from 'embla-carousel-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
@@ -14,31 +14,15 @@ import type { WordVariant, WordGroup } from "@/types";
 import { SpeakButton } from "./speak-button";
 import { VoiceRecorder } from "./voice-recorder";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Info, HelpCircle } from "lucide-react";
+import { Info } from "lucide-react";
 
 // Sort the words alphabetically by base_spelling for display
 const sortedVietnameseWords = [...vietnameseWords].sort((a, b) => 
   a.base_spelling.localeCompare(b.base_spelling)
 );
 
-const toneInfo = Object.entries(toneMarkers).map(([key, value]) => {
-  const match = value.match(/(.+)\((.+)\) - (.+)/);
-  if (match) {
-    const symbol = match[1].trim();
-    const englishName = key.replace('-', ' ');
-    const vietnameseName = match[3].trim();
-    return { englishName, vietnameseName, symbol };
-  }
-   // Handle "no mark" case
-   const noMarkMatch = value.match(/no mark \((.+)\)/);
-   if (noMarkMatch) {
-     return { englishName: 'level', vietnameseName: noMarkMatch[1], symbol: 'no mark' };
-   }
-  return null;
-}).filter(Boolean);
-
 export function PracticeView() {
-  const [emblaApi, setEmblaApi] = useState<CarouselApi | undefined>();
+  const [emblaApi, setEmblaApi] = useState<CarouselApi>();
   const [selectedGroup, setSelectedGroup] = useState<WordGroup>(sortedVietnameseWords[0]);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
