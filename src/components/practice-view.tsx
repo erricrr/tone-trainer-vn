@@ -13,14 +13,32 @@ import { vietnameseWords, toneMarkers } from "@/data/words";
 import type { WordVariant, WordGroup } from "@/types";
 import { SpeakButton } from "./speak-button";
 import { VoiceRecorder } from "./voice-recorder";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Info, HelpCircle } from "lucide-react";
 
 // Sort the words alphabetically by base_spelling for display
 const sortedVietnameseWords = [...vietnameseWords].sort((a, b) => 
   a.base_spelling.localeCompare(b.base_spelling)
 );
 
+const toneInfo = Object.entries(toneMarkers).map(([key, value]) => {
+  const match = value.match(/(.+)\((.+)\) - (.+)/);
+  if (match) {
+    const symbol = match[1].trim();
+    const englishName = key.replace('-', ' ');
+    const vietnameseName = match[3].trim();
+    return { englishName, vietnameseName, symbol };
+  }
+   // Handle "no mark" case
+   const noMarkMatch = value.match(/no mark \((.+)\)/);
+   if (noMarkMatch) {
+     return { englishName: 'level', vietnameseName: noMarkMatch[1], symbol: 'no mark' };
+   }
+  return null;
+}).filter(Boolean);
+
 export function PracticeView() {
-  const [emblaApi, setEmblaApi] = useState<CarouselApi>();
+  const [emblaApi, setEmblaApi] = useState<CarouselApi | undefined>();
   const [selectedGroup, setSelectedGroup] = useState<WordGroup>(sortedVietnameseWords[0]);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -63,7 +81,36 @@ export function PracticeView() {
             <AccordionItem value="item-1" className="border-b-0">
                 <AccordionTrigger className="p-6 hover:no-underline">
                     <CardHeader className="p-0 text-left">
-                        <CardTitle>Word Groups</CardTitle>
+                        <div className="flex items-center gap-2">
+                            <CardTitle>Word Groups</CardTitle>
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <Button variant="ghost" size="icon" className="h-6 w-6">
+                                        <Info className="h-4 w-4 text-muted-foreground" />
+                                    </Button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-80">
+                                    <div className="grid gap-4">
+                                        <div className="space-y-2">
+                                            <h4 className="font-medium leading-none">Tone Guide</h4>
+                                            <p className="text-sm text-muted-foreground">
+                                                A guide to the six tones in Vietnamese.
+                                            </p>
+                                        </div>
+                                        <div className="grid gap-2">
+                                            {Object.entries(toneMarkers).map(([key, value]) => (
+                                                <div key={key} className="grid grid-cols-[auto,1fr] items-center gap-x-2">
+                                                    <p className="font-mono text-sm font-bold text-primary">{value.split(' - ')[0].match(/`|´| |̉|~|\./)}</p>
+                                                    <div className="text-sm">
+                                                        <p className="font-semibold capitalize">{key.replace('-', ' ')} <span className="text-muted-foreground">({value.split(' - ')[1] || value.match(/\(([^)]+)\)/)?.[1]})</span></p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </PopoverContent>
+                            </Popover>
+                        </div>
                         <CardDescription>Select a word group to practice listening and pronunciation.</CardDescription>
                     </CardHeader>
                 </AccordionTrigger>
