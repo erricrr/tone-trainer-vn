@@ -81,12 +81,13 @@ export function PracticeView() {
                                 setApi={setEmblaApi} 
                                 className="w-full"
                                 opts={{
-                                    align: "start",
+                                    align: "center",
+                                    loop: true,
                                 }}
                             >
-                                <CarouselContent className="-ml-2 py-4">
+                                <CarouselContent className="-ml-4">
                                 {sortedVietnameseWords.map((group, index) => (
-                                    <CarouselItem key={index} className="pl-2 basis-1/2 md:basis-1/3">
+                                    <CarouselItem key={index} className="pl-4 basis-full sm:basis-1/2 md:basis-1/3">
                                         <div className="p-1 h-full">
                                             <Card 
                                                 className={cn(
@@ -106,8 +107,8 @@ export function PracticeView() {
                                     </CarouselItem>
                                 ))}
                                 </CarouselContent>
-                                <CarouselPrevious className="absolute -left-4 top-1/2 -translate-y-1/2" />
-                                <CarouselNext className="absolute -right-4 top-1/2 -translate-y-1/2" />
+                                <CarouselPrevious className="absolute -left-10 top-1/2 -translate-y-1/2" />
+                                <CarouselNext className="absolute -right-10 top-1/2 -translate-y-1/2" />
                             </Carousel>
                         </div>
                     </CardContent>
