@@ -76,7 +76,13 @@ export function PracticeView() {
                                 </Button>
                             ))}
                         </div>
-                    <Carousel setApi={setEmblaApi} className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg">
+                    <Carousel 
+                        setApi={setEmblaApi} 
+                        className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg"
+                        opts={{
+                            watchDrag: false,
+                        }}
+                    >
                         <CarouselContent className="ml-2 py-4">
                         {sortedVietnameseWords.map((group, index) => (
                             <CarouselItem key={index} className="pl-2 basis-1/2 md:basis-1/3">
