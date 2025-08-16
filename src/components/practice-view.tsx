@@ -87,7 +87,7 @@ export function PracticeView() {
                             >
                                 <CarouselContent className="-ml-4">
                                 {sortedVietnameseWords.map((group, index) => (
-                                    <CarouselItem key={index} className="pl-4 basis-full sm:basis-1/2 md:basis-1/3">
+                                    <CarouselItem key={index} className="pl-4 basis-1/2 md:basis-1/3">
                                         <div className="p-1 h-full">
                                             <Card 
                                                 className={cn(
