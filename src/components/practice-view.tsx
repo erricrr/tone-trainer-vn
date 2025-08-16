@@ -76,12 +76,12 @@ export function PracticeView() {
                                 </Button>
                             ))}
                         </div>
-                        <div className="relative w-full flex items-center justify-center">
+                        <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
                             <Carousel 
                                 setApi={setEmblaApi} 
-                                className="w-full max-w-xs sm:max-w-sm md:max-w-md"
+                                className="w-full"
                                 opts={{
-                                    watchDrag: false,
+                                    align: "start",
                                 }}
                             >
                                 <CarouselContent className="-ml-2 py-4">
@@ -106,8 +106,8 @@ export function PracticeView() {
                                     </CarouselItem>
                                 ))}
                                 </CarouselContent>
-                                <CarouselPrevious className="absolute -left-8 sm:-left-10 md:-left-12" />
-                                <CarouselNext className="absolute -right-8 sm:-right-10 md:-right-12" />
+                                <CarouselPrevious className="absolute -left-4 top-1/2 -translate-y-1/2" />
+                                <CarouselNext className="absolute -right-4 top-1/2 -translate-y-1/2" />
                             </Carousel>
                         </div>
                     </CardContent>
