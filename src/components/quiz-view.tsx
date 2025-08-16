@@ -4,6 +4,7 @@
 import { useState } from "react";
 import { LoaderCircle, Rocket, Sparkles, CheckCircle, XCircle, ArrowLeft, ArrowRight, RefreshCw, Award } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
+import ReactMarkdown from 'react-markdown';
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
@@ -54,7 +55,7 @@ export function QuizView() {
 
   const goToPrevious = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(prev => prev - 1);
+      setCurrentQuestionIndex(prev => prev + 1);
     }
   };
 
@@ -194,7 +195,11 @@ export function QuizView() {
                 <Alert className="bg-blue-50 border-blue-200">
                   <Sparkles className="h-5 w-5 text-primary" />
                   <AlertTitle className="font-semibold text-primary text-lg">AI Feedback</AlertTitle>
-                  <AlertDescription className="text-base">{results.feedback}</AlertDescription>
+                  <AlertDescription asChild>
+                    <ReactMarkdown className="prose prose-sm text-base">
+                      {results.feedback}
+                    </ReactMarkdown>
+                  </AlertDescription>
                 </Alert>
 
                 <div>

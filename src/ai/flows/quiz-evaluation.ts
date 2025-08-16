@@ -24,7 +24,7 @@ export type EvaluateQuizInput = z.infer<typeof EvaluateQuizInputSchema>;
 
 const EvaluateQuizOutputSchema = z.object({
   score: z.number().describe('The overall quiz score (0-100).'),
-  feedback: z.string().describe('Personalized feedback on areas needing practice, including specific tones or words to focus on.'),
+  feedback: z.string().describe('Short, personalized feedback (2-3 sentences) on areas needing practice. Use simple Markdown for bullet points or bold text to highlight specific tones or words.'),
 });
 export type EvaluateQuizOutput = z.infer<typeof EvaluateQuizOutputSchema>;
 
@@ -38,14 +38,15 @@ const prompt = ai.definePrompt({
   output: {schema: EvaluateQuizOutputSchema},
   prompt: `You are an expert Vietnamese language tutor. You are given the results of a quiz taken by a student learning Vietnamese tones.
 
-Evaluate the quiz and provide a score out of 100. Then provide personalized feedback to the student, highlighting the specific tones or words they struggled with.
+Evaluate the quiz and provide a score out of 100. 
+
+Then provide short, personalized feedback (2-3 sentences max). Use simple markdown (like **bold** for emphasis or * for bullet points) to highlight the specific tones or words they struggled with. Be encouraging.
 
 Quiz Data:
 {{#each quizData}}
-Question: {{this.question}}
-Options: {{this.options}}
-Correct Answer: {{this.correctAnswer}}
-User Answer: {{this.userAnswer}}
+- Question: {{this.question}}
+  - Correct Answer: {{this.correctAnswer}}
+  - User Answer: {{this.userAnswer}}
 {{/each}}
 `,
 });
