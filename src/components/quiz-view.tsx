@@ -201,7 +201,8 @@ export function QuizView() {
                   <h3 className="font-semibold mb-3 text-xl">Your Answers</h3>
                   <ul className="space-y-2 max-h-60 overflow-y-auto pr-2">
                     {questions.map((q, i) => {
-                      const isCorrect = userAnswers[i] === q.correctAnswer;
+                      const userAnswer = userAnswers[i] || 'Not answered';
+                      const isCorrect = userAnswer === q.correctAnswer;
                       return (
                         <li key={i} className="flex items-center justify-between p-3 rounded-lg bg-secondary/70">
                           <div className="flex items-center gap-2">
@@ -209,7 +210,8 @@ export function QuizView() {
                             <div className="font-medium">Q{i + 1}: <span className="font-normal text-muted-foreground">{q.correctAnswer}</span></div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <span className={`font-semibold ${isCorrect ? 'text-green-600' : 'text-destructive'}`}>{userAnswers[i] || 'Not answered'}</span>
+                             {!isCorrect && userAnswer !== 'Not answered' && <SpeakButton text={userAnswer} />}
+                            <span className={`font-semibold ${isCorrect ? 'text-green-600' : 'text-destructive'}`}>{userAnswer}</span>
                             {isCorrect ? (
                               <CheckCircle className="h-5 w-5 text-green-500" />
                             ) : (
