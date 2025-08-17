@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: 'Tone Trainer VN',
+  title: 'Tone Trainer',
   description: 'An application to help you master Vietnamese tones through practice and quizzes.',
 };
 

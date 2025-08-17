@@ -25,7 +25,7 @@ export default function Home() {
       <Sidebar>
         <SidebarHeader>
           <div className="flex items-center gap-2 p-2 pl-12 md:pl-12">
-            <h1 className="text-xl font-semibold tracking-tight">Tone Trainer VN</h1>
+            <h1 className="text-xl font-semibold tracking-tight">VN Tone Trainer</h1>
           </div>
         </SidebarHeader>
         <SidebarContent>
@@ -55,7 +55,7 @@ export default function Home() {
         <header className="sticky top-0 z-10 w-full bg-background/80 backdrop-blur-sm border-b md:hidden">
           <div className="container mx-auto flex h-16 items-center justify-between px-4">
             <div className="flex items-center gap-2">
-              <h1 className="text-lg font-bold tracking-tight">Tone Trainer VN</h1>
+              <h1 className="text-lg font-bold tracking-tight">VN Tone Trainer</h1>
             </div>
             <SidebarTrigger />
           </div>

@@ -1,10 +1,10 @@
-# **App Name**: Tone Trainer VN
+# **App Name**: VN Tone Trainer
 
 ## Core Features:
 
 - Word List Display: Presents a list of Vietnamese words (from the provided word list) for the user to practice listening to.
 - Audio Playback: Audio playback for each word in the word list.
-- Quiz Generation and Presentation: Presents a multiple-choice quiz testing the user's ability to differentiate words by tone; plays a sound, presents word choices. 
+- Quiz Generation and Presentation: Presents a multiple-choice quiz testing the user's ability to differentiate words by tone; plays a sound, presents word choices.
 - Quiz Evaluation: Scores quiz and gives feedback on areas needing practice.
 - Personalized Word Filtering: Dynamically filter words based on difficulty. When generating the Quiz, increase weights of the words that were determined to be difficult for the user.
 
