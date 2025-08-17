@@ -72,7 +72,7 @@ export default function Home() {
           </SidebarMenuButton>
         </SheetTrigger>
 
-        <SheetContent side="bottom" className="h-auto max-h-[80vh]">
+                 <SheetContent side="bottom" className="h-auto max-h-[80vh] [&>button]:hidden">
           <SheetHeader className="text-left">
             <SheetTitle>About VN Tone Trainer</SheetTitle>
             <SheetDescription>
@@ -83,7 +83,7 @@ export default function Home() {
 
           <div className="mt-6 space-y-6 text-sm leading-relaxed">
             <div>
-              <h4 className="font-medium mb-2">Technical Notes</h4>
+              <h4 className="font-medium mb-2">Note on Audio</h4>
               <p className="text-muted-foreground">
                 The text-to-speech could use better voice over, but it’s okay for now and serves the purpose of pronunciation practice.
               </p>
@@ -103,14 +103,14 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Close button at the bottom */}
-          <div className="mt-8 flex justify-center">
-            <SheetClose asChild>
-              <Button variant="outline" className="w-full max-w-xs">
-                Close
-              </Button>
-            </SheetClose>
-          </div>
+                     {/* Close button at the bottom */}
+           <div className="mt-8 flex justify-center">
+             <SheetClose asChild>
+               <Button className="w-full max-w-xs">
+                 Close
+               </Button>
+             </SheetClose>
+           </div>
         </SheetContent>
       </Sheet>
     </SidebarMenuItem>
