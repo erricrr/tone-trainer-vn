@@ -17,7 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Info } from "lucide-react";
 
 // Sort the words alphabetically by base_spelling for display
-const sortedVietnameseWords = [...vietnameseWords].sort((a, b) => 
+const sortedVietnameseWords = [...vietnameseWords].sort((a, b) =>
   a.base_spelling.localeCompare(b.base_spelling)
 );
 
@@ -37,7 +37,7 @@ export function PracticeView() {
       emblaApi.scrollTo(index);
     }
   };
-  
+
   const onSelect = useCallback((emblaApi: CarouselApi) => {
     if (!emblaApi) return;
     const newIndex = emblaApi.selectedScrollSnap();
@@ -47,7 +47,7 @@ export function PracticeView() {
 
   useEffect(() => {
     if (!emblaApi) return;
-    
+
     onSelect(emblaApi);
     emblaApi.on('select', onSelect);
 
@@ -63,16 +63,16 @@ export function PracticeView() {
       <Card>
         <Accordion type="single" collapsible defaultValue="item-1" className="w-full">
             <AccordionItem value="item-1" className="border-b-0">
-                <div className="flex items-center justify-between p-6">
-                    <AccordionTrigger className="flex-grow hover:no-underline p-0">
-                        <CardHeader className="p-0 text-left">
+                <div className="relative p-6">
+                    <AccordionTrigger className="hover:no-underline p-0 [&>svg]:absolute [&>svg]:top-2 [&>svg]:right-2">
+                        <CardHeader className="p-0 text-left pr-8">
                            <CardTitle>Word Groups</CardTitle>
                            <CardDescription>Select a word group to practice listening and pronunciation.</CardDescription>
                         </CardHeader>
                     </AccordionTrigger>
                     <Popover>
                         <PopoverTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-6 w-6 ml-2">
+                            <Button variant="ghost" size="icon" className="absolute top-6 right-12 h-6 w-6">
                                 <Info className="h-4 w-4 text-muted-foreground" />
                             </Button>
                         </PopoverTrigger>
@@ -108,8 +108,8 @@ export function PracticeView() {
                             ))}
                         </div>
                         <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
-                            <Carousel 
-                                setApi={setEmblaApi} 
+                            <Carousel
+                                setApi={setEmblaApi}
                                 className="w-full"
                                 opts={{
                                     align: "center",
@@ -120,9 +120,9 @@ export function PracticeView() {
                                 {sortedVietnameseWords.map((group, index) => (
                                     <CarouselItem key={index} className="pl-4 basis-1/2 md:basis-1/3">
                                         <div className="p-1 h-full">
-                                            <Card 
+                                            <Card
                                                 className={cn(
-                                                    "cursor-pointer transition-all h-full flex flex-col justify-center rounded-lg", 
+                                                    "cursor-pointer transition-all h-full flex flex-col justify-center rounded-lg",
                                                     index === selectedIndex ? "border-primary shadow-lg" : "border-transparent hover:shadow-md"
                                                 )}
                                                 onClick={() => emblaApi?.scrollTo(index)}
