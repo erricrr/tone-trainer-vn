@@ -33,12 +33,15 @@ export function SpeakButton({ text, size = "icon" }: SpeakButtonProps) {
 
   const playWithServerTTS = useCallback(async (input: string, seq: number): Promise<"started" | "failed"> => {
     try {
-      // Add cache-busting parameter to ensure unique URLs for different texts
+      // Add multiple cache-busting parameters to ensure unique URLs for different texts
       // Use a simple hash based on text length and character codes (Unicode-safe)
       const textHash = input.split('').reduce((hash, char) => {
         return ((hash << 5) - hash + char.charCodeAt(0)) & 0xfffff;
       }, 0).toString(16);
-      const res = await fetchWithTimeout(`/api/tts?text=${encodeURIComponent(input)}&lang=vi&h=${textHash}`, 3000);
+
+      // Add timestamp to make each request completely unique (no caching issues)
+      const timestamp = Date.now();
+      const res = await fetchWithTimeout(`/api/tts?text=${encodeURIComponent(input)}&lang=vi&h=${textHash}&t=${timestamp}`, 3000);
       if (!res.ok) {
         console.log(`TTS API failed with status ${res.status} for text: "${input}"`);
         return "failed";
