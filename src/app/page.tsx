@@ -1,7 +1,7 @@
 
 "use client";
 
-import { BookOpen, Ear, Zap } from "lucide-react";
+import { BookOpen, Ear, HelpCircle } from "lucide-react";
 import {
   SidebarProvider,
   Sidebar,
@@ -13,6 +13,16 @@ import {
   SidebarTrigger,
   SidebarInset,
 } from "@/components/ui/sidebar";
+import {
+  Sheet,
+  SheetTrigger,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetClose,
+} from "@/components/ui/sheet";
+import { Button } from "@/components/ui/button";
 import { PracticeView } from "@/components/practice-view";
 import { QuizView } from "@/components/quiz-view";
 import React from "react";
@@ -39,7 +49,7 @@ export default function Home() {
                 Practice
               </SidebarMenuButton>
             </SidebarMenuItem>
-            <SidebarMenuItem>
+                        <SidebarMenuItem>
               <SidebarMenuButton
                 onClick={() => setActiveView("quiz")}
                 isActive={activeView === "quiz"}
@@ -49,6 +59,64 @@ export default function Home() {
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
+
+          {/* About section at the bottom of the sidebar */}
+          <div className="mt-auto">
+  <SidebarMenu>
+    <SidebarMenuItem>
+      <Sheet>
+        <SheetTrigger asChild>
+          <SidebarMenuButton>
+            <HelpCircle />
+            About
+          </SidebarMenuButton>
+        </SheetTrigger>
+
+        <SheetContent side="bottom" className="h-auto max-h-[80vh]">
+          <SheetHeader className="text-left">
+            <SheetTitle>About VN Tone Trainer</SheetTitle>
+            <SheetDescription>
+              This content was AI generated and the quizzes are AI generated and scored by Gemini-2.0-Flash.
+              I created this as part of my Vietnamese learning journey to help master the challenging tonal aspects of the language.
+            </SheetDescription>
+          </SheetHeader>
+
+          <div className="mt-6 space-y-6 text-sm leading-relaxed">
+            <div>
+              <h4 className="font-medium mb-2">Technical Notes</h4>
+              <p className="text-muted-foreground">
+                The text-to-speech could use better voice over, but it’s okay for now and serves the purpose of pronunciation practice.
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-medium mb-2">Contact</h4>
+              <p className="text-muted-foreground">
+                Email:{" "}
+                <a
+                  href="mailto:voicevoz321@gmail.com"
+                  className="underline hover:text-primary transition-colors"
+                >
+                  voicevoz321@gmail.com
+                </a>
+              </p>
+            </div>
+          </div>
+
+          {/* Close button at the bottom */}
+          <div className="mt-8 flex justify-center">
+            <SheetClose asChild>
+              <Button variant="outline" className="w-full max-w-xs">
+                Close
+              </Button>
+            </SheetClose>
+          </div>
+        </SheetContent>
+      </Sheet>
+    </SidebarMenuItem>
+  </SidebarMenu>
+</div>
+
         </SidebarContent>
       </Sidebar>
       <SidebarInset>
@@ -64,15 +132,10 @@ export default function Home() {
         <div className="hidden md:block fixed top-4 left-4 z-20">
           <SidebarTrigger />
         </div>
-        <main className="flex-grow container mx-auto p-2 sm:p-4 md:p-8">
+                <main className="flex-grow container mx-auto p-2 sm:p-4 md:p-8">
             {activeView === 'practice' && <PracticeView />}
             {activeView === 'quiz' && <QuizView />}
         </main>
-        <footer className="w-full bg-secondary/50 text-secondary-foreground py-4 mt-auto">
-          <div className="container mx-auto text-center text-sm">
-            <p>Made with ❤️ to help you master Vietnamese tones.</p>
-          </div>
-        </footer>
       </SidebarInset>
     </SidebarProvider>
   );
