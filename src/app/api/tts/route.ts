@@ -39,11 +39,10 @@ export async function GET(request: Request) {
   return new NextResponse(Buffer.from(arrayBuffer), {
     headers: {
       "Content-Type": "audio/mpeg",
-      // Temporarily disable caching to fix Netlify issue
-      // Can be re-enabled later with a more sophisticated approach
-      "Cache-Control": "no-cache, no-store, must-revalidate",
-      "Pragma": "no-cache",
-      "Expires": "0",
+      // Aggressive caching for same content, unique URLs ensure no collisions
+      "Cache-Control": "public, max-age=86400, immutable",
+      // Use deterministic ETag based on content for better caching
+      "ETag": `"tts-${Buffer.from(text + lang).toString('base64').substring(0, 8)}"`,
     },
   });
   } catch (error) {

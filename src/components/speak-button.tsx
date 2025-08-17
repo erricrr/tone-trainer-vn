@@ -34,11 +34,20 @@ export function SpeakButton({ text, size = "icon" }: SpeakButtonProps) {
   const playWithServerTTS = useCallback(async (input: string, seq: number): Promise<"started" | "failed"> => {
     try {
       // Add cache-busting parameter to ensure unique URLs for different texts
-      const textHash = btoa(input).replace(/[/+=]/g, '').substring(0, 8);
-      const res = await fetchWithTimeout(`/api/tts?text=${encodeURIComponent(input)}&lang=vi&h=${textHash}`, 2500);
-      if (!res.ok) return "failed";
+      // Use a simple hash based on text length and character codes (Unicode-safe)
+      const textHash = input.split('').reduce((hash, char) => {
+        return ((hash << 5) - hash + char.charCodeAt(0)) & 0xfffff;
+      }, 0).toString(16);
+      const res = await fetchWithTimeout(`/api/tts?text=${encodeURIComponent(input)}&lang=vi&h=${textHash}`, 3000);
+      if (!res.ok) {
+        console.log(`TTS API failed with status ${res.status} for text: "${input}"`);
+        return "failed";
+      }
       const blob = await res.blob();
-      if (blob.size === 0) return "failed";
+      if (blob.size === 0) {
+        console.log(`TTS API returned empty blob for text: "${input}"`);
+        return "failed";
+      }
 
       // Clean up any existing audio and URL
       if (audioRef.current) {
@@ -56,6 +65,7 @@ export function SpeakButton({ text, size = "icon" }: SpeakButtonProps) {
       const audio = new Audio(objectUrl);
       audioRef.current = audio;
 
+      // Set up event handlers before preloading
       audio.onplay = () => {
         // Guard against stale handlers
         if (playSeqRef.current !== seq) return;
@@ -75,10 +85,15 @@ export function SpeakButton({ text, size = "icon" }: SpeakButtonProps) {
         setIsSpeaking(false);
       };
 
+      // Preload the audio to reduce play delay
+      audio.preload = 'auto';
+
+      // Try to play immediately - this will trigger faster
       await audio.play();
       // If play() resolves, consider it started; handlers will manage speaking state
       return "started";
-    } catch {
+    } catch (error) {
+      console.log(`TTS playback failed for text: "${input}"`, error);
       return "failed";
     }
   }, [fetchWithTimeout]);
@@ -124,18 +139,18 @@ export function SpeakButton({ text, size = "icon" }: SpeakButtonProps) {
       URL.revokeObjectURL(objectUrlRef.current);
       objectUrlRef.current = null;
     }
+
+    // Show loading state immediately for better UX
     setIsSpeaking(true);
 
-    // Try server TTS with a short timeout; only fall back if we can't start playback
+    // Try server TTS (Google TTS)
     const result = await playWithServerTTS(text, mySeq);
     if (result === "failed" && playSeqRef.current === mySeq) {
-      // If server TTS couldn't start, use Web Speech API
-      const started = speakWithWebApi(text);
-      if (!started) {
-        setIsSpeaking(false);
-      }
+      // Google TTS failed - just stop, don't fall back to web speech
+      console.log(`Google TTS failed for text: "${text}" - not falling back to web speech`);
+      setIsSpeaking(false);
     }
-  }, [isSpeaking, playWithServerTTS, speakWithWebApi, text]);
+  }, [isSpeaking, playWithServerTTS, text]);
 
   if (!isMounted) {
     return <Button variant="ghost" size={size} disabled={true}><LoaderCircle className="animate-spin" /></Button>;
