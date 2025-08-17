@@ -34,13 +34,18 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Upstream TTS request failed" }, { status: response.status });
     }
 
-    const arrayBuffer = await response.arrayBuffer();
-    return new NextResponse(Buffer.from(arrayBuffer), {
-      headers: {
-        "Content-Type": "audio/mpeg",
-        "Cache-Control": "public, max-age=86400",
-      },
-    });
+      const arrayBuffer = await response.arrayBuffer();
+
+  return new NextResponse(Buffer.from(arrayBuffer), {
+    headers: {
+      "Content-Type": "audio/mpeg",
+      // Temporarily disable caching to fix Netlify issue
+      // Can be re-enabled later with a more sophisticated approach
+      "Cache-Control": "no-cache, no-store, must-revalidate",
+      "Pragma": "no-cache",
+      "Expires": "0",
+    },
+  });
   } catch (error) {
     return NextResponse.json({ error: "TTS proxy error" }, { status: 502 });
   }

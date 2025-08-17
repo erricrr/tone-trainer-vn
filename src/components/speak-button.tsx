@@ -33,7 +33,9 @@ export function SpeakButton({ text, size = "icon" }: SpeakButtonProps) {
 
   const playWithServerTTS = useCallback(async (input: string, seq: number): Promise<"started" | "failed"> => {
     try {
-      const res = await fetchWithTimeout(`/api/tts?text=${encodeURIComponent(input)}&lang=vi`, 2500);
+      // Add cache-busting parameter to ensure unique URLs for different texts
+      const textHash = btoa(input).replace(/[/+=]/g, '').substring(0, 8);
+      const res = await fetchWithTimeout(`/api/tts?text=${encodeURIComponent(input)}&lang=vi&h=${textHash}`, 2500);
       if (!res.ok) return "failed";
       const blob = await res.blob();
       if (blob.size === 0) return "failed";
