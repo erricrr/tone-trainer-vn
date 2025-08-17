@@ -90,7 +90,7 @@ export default function Home() {
             </div>
 
             <div>
-              <h4 className="font-medium mb-2">Contact</h4>
+              <h4 className="font-medium mb-2">Contact & Feedback</h4>
               <p className="text-muted-foreground">
                 Email:{" "}
                 <a
