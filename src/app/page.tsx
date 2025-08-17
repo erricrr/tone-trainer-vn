@@ -24,8 +24,7 @@ export default function Home() {
     <SidebarProvider>
       <Sidebar>
         <SidebarHeader>
-          <div className="flex items-center gap-2 p-2">
-            <Zap className="h-6 w-6 text-primary" />
+          <div className="flex items-center gap-2 p-2 pl-12 md:pl-12">
             <h1 className="text-xl font-semibold tracking-tight">Tone Trainer VN</h1>
           </div>
         </SidebarHeader>
@@ -62,6 +61,10 @@ export default function Home() {
             <SidebarTrigger />
           </div>
         </header>
+        {/* Desktop sidebar toggle - only visible on larger screens */}
+        <div className="hidden md:block fixed top-4 left-4 z-20">
+          <SidebarTrigger />
+        </div>
         <main className="flex-grow container mx-auto p-2 sm:p-4 md:p-8">
             {activeView === 'practice' && <PracticeView />}
             {activeView === 'quiz' && <QuizView />}
