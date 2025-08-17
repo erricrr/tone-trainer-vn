@@ -13,60 +13,80 @@ export function SpeakButton({ text, size = "icon" }: SpeakButtonProps) {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const objectUrlRef = useRef<string | null>(null);
+  const playSeqRef = useRef<number>(0);
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  const playWithServerTTS = useCallback(async (input: string): Promise<boolean> => {
+  const fetchWithTimeout = useCallback(async (resource: string, ms: number) => {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), ms);
     try {
-      const res = await fetch(`/api/tts?text=${encodeURIComponent(input)}&lang=vi`);
-      if (!res.ok) return false;
-      const blob = await res.blob();
-      if (blob.size === 0) return false;
+      const response = await fetch(resource, { signal: controller.signal });
+      return response;
+    } finally {
+      clearTimeout(id);
+    }
+  }, []);
 
-      // Stop any existing playback
+  const playWithServerTTS = useCallback(async (input: string, seq: number): Promise<"started" | "failed"> => {
+    try {
+      const res = await fetchWithTimeout(`/api/tts?text=${encodeURIComponent(input)}&lang=vi`, 2500);
+      if (!res.ok) return "failed";
+      const blob = await res.blob();
+      if (blob.size === 0) return "failed";
+
+      // Clean up any existing audio and URL
       if (audioRef.current) {
-        audioRef.current.pause();
+        try { audioRef.current.pause(); } catch {}
         audioRef.current.src = "";
         audioRef.current = null;
       }
+      if (objectUrlRef.current) {
+        URL.revokeObjectURL(objectUrlRef.current);
+        objectUrlRef.current = null;
+      }
 
       const objectUrl = URL.createObjectURL(blob);
+      objectUrlRef.current = objectUrl;
       const audio = new Audio(objectUrl);
       audioRef.current = audio;
 
-      return await new Promise<boolean>((resolve) => {
-        audio.onplay = () => setIsSpeaking(true);
-        audio.onended = () => {
-          setIsSpeaking(false);
-          URL.revokeObjectURL(objectUrl);
-          resolve(true);
-        };
-        audio.onerror = () => {
-          setIsSpeaking(false);
-          URL.revokeObjectURL(objectUrl);
-          resolve(false);
-        };
-        // Start playback
-        audio.play().catch(() => {
-          setIsSpeaking(false);
-          URL.revokeObjectURL(objectUrl);
-          resolve(false);
-        });
-      });
+      audio.onplay = () => {
+        // Guard against stale handlers
+        if (playSeqRef.current !== seq) return;
+        setIsSpeaking(true);
+      };
+      audio.onended = () => {
+        if (playSeqRef.current !== seq) return;
+        setIsSpeaking(false);
+        // Keep URL around briefly to avoid GC mid-playback issues; revoke now that ended
+        if (objectUrlRef.current) {
+          URL.revokeObjectURL(objectUrlRef.current);
+          objectUrlRef.current = null;
+        }
+      };
+      audio.onerror = () => {
+        if (playSeqRef.current !== seq) return;
+        setIsSpeaking(false);
+      };
+
+      await audio.play();
+      // If play() resolves, consider it started; handlers will manage speaking state
+      return "started";
     } catch {
-      return false;
+      return "failed";
     }
-  }, []);
+  }, [fetchWithTimeout]);
 
   const speakWithWebApi = useCallback((input: string): boolean => {
     if (typeof window === 'undefined' || !window.speechSynthesis) return false;
     const synthesis = window.speechSynthesis;
     const voices = synthesis.getVoices();
     const viVoices = voices.filter(v => (v.lang || '').toLowerCase().startsWith('vi'));
-    const preferred = viVoices.find(v => /google|viet|viêt|vietnam/i.test(v.name));
-    const voice = preferred || viVoices[0];
+    const voice = viVoices[0];
 
     const utterance = new SpeechSynthesisUtterance(input);
     utterance.lang = "vi-VN";
@@ -87,10 +107,31 @@ export function SpeakButton({ text, size = "icon" }: SpeakButtonProps) {
     e.preventDefault();
     if (isSpeaking) return;
 
-    // Try high-quality server TTS first, then fall back to Web Speech API
-    const ok = await playWithServerTTS(text);
-    if (!ok) {
-      speakWithWebApi(text);
+    // Take ownership for this click to avoid races
+    playSeqRef.current += 1;
+    const mySeq = playSeqRef.current;
+
+    // Cancel any existing audio/speech immediately and lock UI
+    try { window.speechSynthesis?.cancel(); } catch {}
+    if (audioRef.current) {
+      try { audioRef.current.pause(); } catch {}
+      audioRef.current.src = "";
+      audioRef.current = null;
+    }
+    if (objectUrlRef.current) {
+      URL.revokeObjectURL(objectUrlRef.current);
+      objectUrlRef.current = null;
+    }
+    setIsSpeaking(true);
+
+    // Try server TTS with a short timeout; only fall back if we can't start playback
+    const result = await playWithServerTTS(text, mySeq);
+    if (result === "failed" && playSeqRef.current === mySeq) {
+      // If server TTS couldn't start, use Web Speech API
+      const started = speakWithWebApi(text);
+      if (!started) {
+        setIsSpeaking(false);
+      }
     }
   }, [isSpeaking, playWithServerTTS, speakWithWebApi, text]);
 
