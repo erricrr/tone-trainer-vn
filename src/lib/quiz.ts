@@ -29,7 +29,7 @@ export function generateQuiz(
 
   // Select groups for the quiz using weighted random sampling
   const selectedGroups: WordGroup[] = [];
-  let tempWeightedGroups = [...weightedGroups];
+  const tempWeightedGroups = [...weightedGroups];
 
   // Protect against trying to select more groups than are available
   const numToSelect = Math.min(quizSize, tempWeightedGroups.length);

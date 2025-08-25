@@ -13,13 +13,15 @@ const MAX_RECORDING_SECONDS = 3;
 export function VoiceRecorder() {
   const [recordingStatus, setRecordingStatus] = useState<RecordingStatus>('idle');
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
-  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+
   const [countdown, setCountdown] = useState(MAX_RECORDING_SECONDS);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const countdownIntervalRef = useRef<NodeJS.Timer | null>(null);
+  const countdownIntervalRef = useRef<number | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -34,8 +36,54 @@ export function VoiceRecorder() {
       if (countdownIntervalRef.current) {
         clearInterval(countdownIntervalRef.current);
       }
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
     };
   }, [audioUrl]);
+
+  // Update audio source when audioUrl changes
+  useEffect(() => {
+    if (audioUrl) {
+      if (!audioRef.current) {
+        audioRef.current = new Audio();
+        audioRef.current.preload = 'auto';
+      }
+      audioRef.current.src = audioUrl;
+    }
+  }, [audioUrl]);
+
+  // Handle audio events
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+    const handleEnded = () => setIsPlaying(false);
+    const handleError = (e: Event) => {
+      console.error('Audio playback error:', e);
+      setIsPlaying(false);
+      toast({
+        title: "Playback Error",
+        description: "Failed to play recording. Please try again.",
+        variant: "destructive",
+      });
+    };
+
+    audio.addEventListener('play', handlePlay);
+    audio.addEventListener('pause', handlePause);
+    audio.addEventListener('ended', handleEnded);
+    audio.addEventListener('error', handleError);
+
+    return () => {
+      audio.removeEventListener('play', handlePlay);
+      audio.removeEventListener('pause', handlePause);
+      audio.removeEventListener('ended', handleEnded);
+      audio.removeEventListener('error', handleError);
+    };
+  }, [toast]);
 
 
   const requestMicPermission = async () => {
@@ -75,7 +123,7 @@ export function VoiceRecorder() {
     setRecordingStatus('recording');
     setCountdown(MAX_RECORDING_SECONDS);
     audioChunksRef.current = [];
-    
+
     const mediaRecorder = new MediaRecorder(stream);
     mediaRecorderRef.current = mediaRecorder;
 
@@ -89,15 +137,22 @@ export function VoiceRecorder() {
       const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
       const audioUrl = URL.createObjectURL(audioBlob);
       setAudioUrl(audioUrl);
-      setAudioBlob(audioBlob);
       setRecordingStatus('recorded');
-       // Stop all tracks on the stream to turn off the mic indicator
-       stream.getTracks().forEach(track => track.stop());
+
+      // Initialize audio element for playback
+      if (!audioRef.current) {
+        audioRef.current = new Audio();
+        audioRef.current.preload = 'auto';
+      }
+      audioRef.current.src = audioUrl;
+
+      // Stop all tracks on the stream to turn off the mic indicator
+      stream.getTracks().forEach(track => track.stop());
     };
 
     mediaRecorder.start();
 
-    countdownIntervalRef.current = setInterval(() => {
+    countdownIntervalRef.current = window.setInterval(() => {
       setCountdown(prev => Math.max(0, prev - 1));
     }, 1000);
 
@@ -106,10 +161,29 @@ export function VoiceRecorder() {
     }, MAX_RECORDING_SECONDS * 1000);
   };
 
-  const playRecording = () => {
-    if (audioUrl) {
-      const audio = new Audio(audioUrl);
-      audio.play();
+  const playRecording = async () => {
+    if (!audioUrl || !audioRef.current) return;
+
+    try {
+      // Reset to beginning if already played
+      if (audioRef.current.currentTime > 0) {
+        audioRef.current.currentTime = 0;
+      }
+
+      // Play the audio
+      const playPromise = audioRef.current.play();
+
+      if (playPromise !== undefined) {
+        await playPromise;
+      }
+    } catch (error) {
+      console.error('Failed to play recording:', error);
+      setIsPlaying(false);
+      toast({
+        title: "Playback Error",
+        description: "Failed to play recording. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -117,9 +191,13 @@ export function VoiceRecorder() {
     if (audioUrl) {
       URL.revokeObjectURL(audioUrl);
     }
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = '';
+    }
     setAudioUrl(null);
-    setAudioBlob(null);
     setRecordingStatus('idle');
+    setIsPlaying(false);
   };
 
   if (recordingStatus === 'permission_denied') {
@@ -166,18 +244,23 @@ export function VoiceRecorder() {
             </div>
         </div>
       )}
-      
+
       {recordingStatus === 'recorded' && (
         <>
             <TooltipProvider>
                 <Tooltip>
                     <TooltipTrigger asChild>
-                        <Button variant="ghost" size="icon" onClick={playRecording}>
+                        <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={playRecording}
+                            disabled={isPlaying}
+                        >
                             <Play className="text-green-500" />
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                        <p>Play recording</p>
+                        <p>{isPlaying ? 'Playing...' : 'Play recording'}</p>
                     </TooltipContent>
                 </Tooltip>
             </TooltipProvider>
