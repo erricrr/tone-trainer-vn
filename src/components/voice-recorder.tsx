@@ -317,18 +317,24 @@ export function VoiceRecorder() {
                     </TooltipContent>
                 </Tooltip>
             </TooltipProvider>
-            <TooltipProvider>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button variant="ghost" size="icon" onClick={deleteRecording}>
-                            <Trash2 className="text-destructive" />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        <p>Delete recording</p>
-                    </TooltipContent>
-                </Tooltip>
-            </TooltipProvider>
+            {isMobile() ? (
+                <Button variant="ghost" size="icon" onClick={deleteRecording}>
+                    <Trash2 className="text-destructive" />
+                </Button>
+            ) : (
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button variant="ghost" size="icon" onClick={deleteRecording}>
+                                <Trash2 className="text-destructive" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>Delete recording</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            )}
         </>
       )}
     </div>
