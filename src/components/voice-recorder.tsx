@@ -5,16 +5,7 @@ import { Mic, Square, Play, Trash2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-
-// Mobile detection utility
-const isMobile = () => {
-  if (typeof window === 'undefined') {
-    return false; // Default to desktop during SSR
-  }
-  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
-         ('ontouchstart' in window) ||
-         (navigator.maxTouchPoints > 0);
-};
+import { useIsMobile } from '@/hooks/use-mobile';
 
 type RecordingStatus = 'idle' | 'permission_denied' | 'recording' | 'recorded';
 
@@ -26,6 +17,7 @@ export function VoiceRecorder() {
 
   const [countdown, setCountdown] = useState(MAX_RECORDING_SECONDS);
   const [isPlaying, setIsPlaying] = useState(false);
+  const isMobile = useIsMobile();
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -116,7 +108,7 @@ export function VoiceRecorder() {
     const stream = await requestMicPermission();
     if (!stream) return;
 
-    const mobile = isMobile();
+    const mobile = isMobile;
     console.log('Starting recording on mobile device:', mobile);
 
     setRecordingStatus('recording');
@@ -177,7 +169,7 @@ export function VoiceRecorder() {
   const playRecording = async () => {
     if (!audioUrl) return;
 
-    const mobile = isMobile();
+    const mobile = isMobile;
     console.log('Playing recording on mobile device:', mobile);
 
     try {
@@ -274,18 +266,18 @@ export function VoiceRecorder() {
   }
 
   return (
-    <div className={`flex items-center ${isMobile() ? 'gap-4' : 'gap-2'}`}>
+    <div className={`flex items-center ${isMobile ? 'gap-4' : 'gap-2'}`}>
       {recordingStatus === 'idle' && (
         <TooltipProvider>
             <Tooltip>
                 <TooltipTrigger asChild>
                     <Button
                         variant="ghost"
-                        size={isMobile() ? "lg" : "icon"}
+                        size={isMobile ? "lg" : "icon"}
                         onClick={startRecording}
-                        className={isMobile() ? "h-12 w-12 p-0" : ""}
+                        className={isMobile ? "h-12 w-12 p-0" : ""}
                     >
-                        <Mic className={isMobile() ? "h-6 w-6" : ""} />
+                        <Mic className={isMobile ? "h-6 w-6" : ""} />
                     </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -299,11 +291,11 @@ export function VoiceRecorder() {
         <div className="relative flex items-center justify-center">
             <Button
                 variant="destructive"
-                size={isMobile() ? "lg" : "icon"}
+                size={isMobile ? "lg" : "icon"}
                 onClick={stopRecording}
-                className={`animate-pulse ${isMobile() ? "h-12 w-12 p-0" : ""}`}
+                className={`animate-pulse ${isMobile ? "h-12 w-12 p-0" : ""}`}
             >
-                <Square className={isMobile() ? "h-6 w-6" : ""} />
+                <Square className={isMobile ? "h-6 w-6" : ""} />
             </Button>
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <span className="text-destructive-foreground font-bold text-sm">{countdown}</span>
@@ -318,12 +310,12 @@ export function VoiceRecorder() {
                     <TooltipTrigger asChild>
                         <Button
                             variant="ghost"
-                            size={isMobile() ? "lg" : "icon"}
+                            size={isMobile ? "lg" : "icon"}
                             onClick={playRecording}
                             disabled={isPlaying}
-                            className={isMobile() ? "h-12 w-12 p-0" : ""}
+                            className={isMobile ? "h-12 w-12 p-0" : ""}
                         >
-                            <Play className={`text-green-500 ${isMobile() ? "h-6 w-6" : ""}`} />
+                            <Play className={`text-green-500 ${isMobile ? "h-6 w-6" : ""}`} />
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -331,7 +323,7 @@ export function VoiceRecorder() {
                     </TooltipContent>
                 </Tooltip>
             </TooltipProvider>
-            {isMobile() ? (
+            {isMobile ? (
                 <Button
                     variant="ghost"
                     size="lg"
