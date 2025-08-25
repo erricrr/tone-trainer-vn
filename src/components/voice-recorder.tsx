@@ -8,6 +8,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 
 // Mobile detection utility
 const isMobile = () => {
+  if (typeof window === 'undefined') {
+    return false; // Default to desktop during SSR
+  }
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
          ('ontouchstart' in window) ||
          (navigator.maxTouchPoints > 0);
@@ -271,13 +274,18 @@ export function VoiceRecorder() {
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className={`flex items-center ${isMobile() ? 'gap-4' : 'gap-2'}`}>
       {recordingStatus === 'idle' && (
         <TooltipProvider>
             <Tooltip>
                 <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" onClick={startRecording}>
-                        <Mic />
+                    <Button
+                        variant="ghost"
+                        size={isMobile() ? "lg" : "icon"}
+                        onClick={startRecording}
+                        className={isMobile() ? "h-12 w-12 p-0" : ""}
+                    >
+                        <Mic className={isMobile() ? "h-6 w-6" : ""} />
                     </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -289,8 +297,13 @@ export function VoiceRecorder() {
 
       {recordingStatus === 'recording' && (
         <div className="relative flex items-center justify-center">
-            <Button variant="destructive" size="icon" onClick={stopRecording} className="animate-pulse">
-                <Square />
+            <Button
+                variant="destructive"
+                size={isMobile() ? "lg" : "icon"}
+                onClick={stopRecording}
+                className={`animate-pulse ${isMobile() ? "h-12 w-12 p-0" : ""}`}
+            >
+                <Square className={isMobile() ? "h-6 w-6" : ""} />
             </Button>
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <span className="text-destructive-foreground font-bold text-sm">{countdown}</span>
@@ -305,11 +318,12 @@ export function VoiceRecorder() {
                     <TooltipTrigger asChild>
                         <Button
                             variant="ghost"
-                            size="icon"
+                            size={isMobile() ? "lg" : "icon"}
                             onClick={playRecording}
                             disabled={isPlaying}
+                            className={isMobile() ? "h-12 w-12 p-0" : ""}
                         >
-                            <Play className="text-green-500" />
+                            <Play className={`text-green-500 ${isMobile() ? "h-6 w-6" : ""}`} />
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
@@ -318,8 +332,13 @@ export function VoiceRecorder() {
                 </Tooltip>
             </TooltipProvider>
             {isMobile() ? (
-                <Button variant="ghost" size="icon" onClick={deleteRecording}>
-                    <Trash2 className="text-destructive" />
+                <Button
+                    variant="ghost"
+                    size="lg"
+                    onClick={deleteRecording}
+                    className="h-12 w-12 p-0"
+                >
+                    <Trash2 className="text-destructive h-6 w-6" />
                 </Button>
             ) : (
                 <TooltipProvider>
