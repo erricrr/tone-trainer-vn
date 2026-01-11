@@ -18,6 +18,10 @@ export async function GET(request: Request) {
   )}&tl=${encodeURIComponent(lang)}&client=tw-ob`;
 
   try {
+    // Add timeout for Netlify function limits (10s free, 26s pro)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000); // 8s timeout to stay under limits
+
     const response = await fetch(ttsUrl, {
       headers: {
         // Using a common browser UA improves success rate on Google's endpoint
@@ -28,7 +32,10 @@ export async function GET(request: Request) {
       },
       // Do not send cookies
       redirect: "follow",
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       return NextResponse.json({ error: "Upstream TTS request failed" }, { status: response.status });
@@ -46,6 +53,9 @@ export async function GET(request: Request) {
     },
   });
   } catch (error) {
+    if (error instanceof Error && error.name === 'AbortError') {
+      return NextResponse.json({ error: "TTS request timeout" }, { status: 504 });
+    }
     return NextResponse.json({ error: "TTS proxy error" }, { status: 502 });
   }
 }
